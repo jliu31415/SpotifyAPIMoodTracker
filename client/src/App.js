@@ -8,7 +8,7 @@ class App extends Component {
   constructor(){
     super();
     const params = this.getHashParams();
-    this.state ={
+    this.state = {
       loggedIn: params.access_token? true : false,
       nowPlaying: {
         name: "",
@@ -16,7 +16,19 @@ class App extends Component {
         trackID: "",
       },
       audioFeatures: {
-        acousticness: ""
+        acousticness: "",
+        danceability: "",
+        duration_ms: "",
+        energy: "",
+        instrumentalness: "",
+        key: "",  //0->C, 1->C#, etc. (pitch class notation)
+        liveness: "",
+        loudness: "",
+        mode: "", //0->minor, 1->major
+        speechiness: "",
+        tempo: "",
+        time_signature: "",
+        valence: "" //conveys "musical positiveness"
       }
     }
     if (params.access_token) {
@@ -42,15 +54,17 @@ class App extends Component {
   getNowPlaying() {
     spotifyWebApi.getMyCurrentPlaybackState()
       .then((response) => {
-        this.setState({
-          nowPlaying: {
-            name: response.item.name,
-            image: response.item.album.images[0].url,
-            trackID: response.item.id
-          }
-        })
+        if (response.item != null) {
+          this.setState({
+            nowPlaying: {
+              name: response.item.name,
+              image: response.item.album.images[0].url,
+              trackID: response.item.id
+            }
+          })
+        }
         this.getAudioFeatures();
-      })
+      }, null)
   }
 
   getAudioFeatures() {
@@ -58,10 +72,34 @@ class App extends Component {
       .then((response) => {
         this.setState({
           audioFeatures: {
-            acousticness: response.acousticness
+            acousticness: response.acousticness,
+            danceability: response.danceability,
+            duration_ms: response.duration_ms,
+            energy: response.energy,
+            instrumentalness: response.instrumentalness,
+            key: response.key,
+            liveness: response.liveness,
+            loudness: response.loudness,
+            mode: response.mode,
+            speechiness: response.speechiness,
+            tempo: response.tempo,
+            time_signature: response.time_signature,
+            valence: response.valence
           }
         })
       })
+  }
+
+  //returns string representation of all audio features
+  setAllAudioFeatures() {
+    var features = "";
+    for (var i = 0; i < this.attributes.length; i++) {
+      var attrib = this.attributes[i];
+      features += attrib.name + ": " + attrib.value + "\n";
+    }
+    console.log("test");
+    console.log(features);
+    return features;
   }
 
   render() {
