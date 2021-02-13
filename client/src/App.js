@@ -37,7 +37,6 @@ class App extends Component {
 
   update() {
     this.getNowPlaying();
-    this.getAudioFeatures();
   }
 
   getNowPlaying() {
@@ -50,6 +49,7 @@ class App extends Component {
             trackID: response.item.id
           }
         })
+        this.getAudioFeatures();
       })
   }
 
